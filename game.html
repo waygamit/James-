@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>gamehehe</title>
+<style>
+  body {
+    background: #222;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+  }
+
+  #gameArea {
+    position: relative;
+    width: 800px;
+    height: 300px;
+    margin: 20px auto;
+    background: #333;
+    border: 3px solid #fff;
+    overflow: hidden;
+  }
+
+  .player {
+    position: absolute;
+    bottom: 0;
+    width: 50px;
+    height: 80px;
+  }
+
+  #player1 {
+    background: red;
+    left: 50px;
+  }
+
+  #player2 {
+    background: blue;
+    right: 50px;
+  }
+
+  .healthBar {
+    height: 20px;
+    background: green;
+    transition: width 0.2s;
+  }
+
+  .healthContainer {
+    width: 300px;
+    border: 2px solid white;
+    height: 20px;
+    margin: 10px auto;
+    background: darkred;
+  }
+
+  #controls {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<h1>⚔ Fist Master ⚔</h1>
+<div id="controls">
+  Player 1: A (left) | D (right) | F (attack)<br>
+  Player 2: ← (left) | → (right) | ArrowDown (attack)
+</div>
+
+<div class="healthContainer">
+  <div id="health1" class="healthBar"></div>
+</div>
+<div class="healthContainer">
+  <div id="health2" class="healthBar"></div>
+</div>
+
+<div id="gameArea">
+  <div id="player1" class="player"></div>
+  <div id="player2" class="player"></div>
+</div>
+
+<h2 id="winnerText"></h2>
+
+<script>
+  const player1 = document.getElementById("player1");
+  const player2 = document.getElementById("player2");
+  const health1Bar = document.getElementById("health1");
+  const health2Bar = document.getElementById("health2");
+  const winnerText = document.getElementById("winnerText");
+
+  //positions and health
+  let p1 = { x: 50, health: 100 };
+  let p2 = { x: 700, health: 100 };
+  let gameOver = false;
+
+  // Update players and health bars
+  function updatePositions() {
+    player1.style.left = p1.x + "px";
+    player2.style.left = p2.x + "px";
+    health1Bar.style.width = p1.health + "%";
+    health2Bar.style.width = p2.health + "%";
+  }
+
+  // Attack
+  function attack(attacker, defender) {
+    if (Math.abs(attacker.x - defender.x) < 60) {
+      defender.health -= 10;
+      if (defender.health < 0) defender.health = 0;
+      if (defender.health === 0) {
+        endGame(attacker === p1 ? "Player 1" : "Player 2");
+      }
+    }
+  }
+
+  // Message
+  function endGame(winner) {
+    gameOver = true;
+    winnerText.textContent = "🏆 " + winner + " Wins!";
+  }
+
+  // Key controls
+  document.addEventListener("keydown", (e) => {
+    if (gameOver) return;
+
+    // Player 1
+    if (e.key.toLowerCase() === "a") p1.x = Math.max(0, p1.x - 10);
+    if (e.key.toLowerCase() === "d") p1.x = Math.min(750, p1.x + 10);
+    if (e.key.toLowerCase() === "f") attack(p1, p2);
+
+    // Player 2
+    if (e.key === "ArrowLeft") p2.x = Math.max(0, p2.x - 10);
+    if (e.key === "ArrowRight") p2.x = Math.min(750, p2.x + 10);
+    if (e.key === "ArrowDown") attack(p2, p1);
+
+    updatePositions();
+  });
+
+  // Start positions
+  updatePositions();
+</script>
+
+</body>
+</html>
